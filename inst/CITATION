@@ -1,0 +1,13 @@
+citHeader("To cite PopShiftCE in publications, please use:")
+
+citEntry(
+  entry = "Article",
+  title = "Two-Stage Adaptive Trials under Partial Population Shift: Surrogate-Only Interim and Monte Carlo Conditional-Error Control",
+  author = person(given = "Hao", family = "Chen"),
+  year = "2025",
+  journal = "Manuscript",
+  note = "R package accompanying the manuscript.",
+  url = "https://github.com/YOUR_GH_USERNAME/PopShiftCE",
+  textVersion =
+    "Chen H (2025). Two-Stage Adaptive Trials under Partial Population Shift: Surrogate-Only Interim and Monte Carlo Conditional-Error Control. R package PopShiftCE. URL: https://github.com/YOUR_GH_USERNAME/PopShiftCE"
+)

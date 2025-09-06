@@ -1,0 +1,13 @@
+
+---
+  title: "Replicating paper figures and tables with PopShiftCE"
+output: html_vignette
+vignette: >
+  %\VignetteIndexEntry{paper-replication}
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteEncoding{UTF-8}
+---
+  
+  ```{r setup, include=FALSE}
+library(PopShiftCE)
+set.seed(12345); RNGkind("L'Ecuyer-CMRG")
