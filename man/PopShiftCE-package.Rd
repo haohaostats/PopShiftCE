@@ -10,7 +10,7 @@ Implements Monte Carlo-calibrated Conditional Error (CE) for two-stage seamless 
 with surrogate-only interim and full-data final analysis under partial population shift
 (design-fixed mixture prevalence). Includes CE lookup calibration under the joint Stage-1 (X, Y)
 dependence and a final OLS + heteroskedasticity-consistent (HC) covariance analysis
-targeting the marginal estimand Δ_marg^\u2020 = δ + η * π_Z^\u2020.
+targeting the marginal estimand \eqn{\Delta_{marg}^\dagger = \delta + \eta * \pi_Z^\dagger}.
 }
 \seealso{
 Useful links:

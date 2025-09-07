@@ -29,5 +29,5 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: https://github.com/YOUR_GH_USERNAME/PopShiftCE
-BugReports: https://github.com/YOUR_GH_USERNAME/PopShiftCE/issues
+URL: https://github.com/haohaostats/PopShiftCE
+BugReports: https://github.com/haohaostats/PopShiftCE/issues
