@@ -47,7 +47,7 @@ devtools::install_github("haohaostats/PopShiftCE", dependencies = TRUE)
 ---
 ## 🚀 Example Workflow
 
-Here is a complete workflow to design a trial, check its operating characteristics under the null and an alternative, and visualize the results.
+Here is a complete workflow to design a trial, check its operating characteristics under the null and an alternative, and visualize the results. **For detailed parameter and function descriptions, see [Functions at a Glance](#functions-at-a-glance).**
 
 ### **Step 1: Build the CE Lookup Table 🧮**
 
@@ -155,43 +155,43 @@ The panel visualizes:
 ---
 ## Functions at a Glance
 
-> Click to expand each function for **purpose, parameters, and returns**.  
-> Math is written with inline LaTeX (e.g., \( e(t_1) \), \( c(t_1) \), \( b_{\mathrm{ref}} \), \( \Delta_{\mathrm{marg}}^\dagger=\delta+\eta\,\pi_Z^\dagger \), \( \hat{Y}=\gamma_0+\gamma_1 X \)).
+> Click to expand each function for purpose, parameters, and returns.  
+> Inline math is written with `$...$` (e.g., `$e(t_1)$`, `$c(t_1)$`, `$b_{\mathrm{ref}}$`, `$\\Delta_{\mathrm{marg}}^{\\dagger} = \\delta + \\eta \\, \\pi_Z^{\\dagger}$`, `$\\hat{Y} = \\gamma_0 + \\gamma_1 X$`).
 
 ---
 
 <details>
-<summary><code>build_ce_lookup()</code> — Calibrate CE mapping under <em>H0</em></summary>
+<summary><code>build_ce_lookup()</code> — Calibrate CE mapping under H0</summary>
 
 **Purpose**  
-Monte Carlo–calibrate the reference boundary \( b_{\mathrm{ref}} \) and estimate the conditional error \( e(t_1) \) and the conditional critical value \( c(t_1) \).
+Monte Carlo–calibrate the reference boundary $b_{\mathrm{ref}}$ and estimate the conditional error $e(t_1)$ and the conditional critical value $c(t_1)$.
 
 **Parameters (design & data-generating)**  
 - `n1`, `n2` — Stage-1 and Stage-2 **per-arm** sample sizes (totals are `2*n1` and `2*n2`).  
-- `muX_C`, `sigmaX` — Mean/SD of surrogate \( X \) in the Stage-1 control arm.  
-- `gamma0`, `gamma1` — External linear calibration for the surrogate projection \( \hat{Y}=\gamma_0+\gamma_1 X \) (pre-specified; **not** re-fit at interim).  
-- `mu0`, `sigmaY` — Baseline mean/SD of the primary endpoint \( Y \) in \( Z=0 \).  
-- `theta` — Main effect of the shifted subpopulation on \( Y \) (baseline shift for \( Z=1 \), applies to both arms).  
-- `eta` — Treatment-by-shift interaction (difference in treatment effect in \( Z=1 \) vs \( Z=0 \)).  
-- `piZ` — Actual prevalence of \( Z=1 \) among Stage-2 enrollees (drives the partial population shift).  
-- `pi_fixed` — Design-fixed prevalence \( \pi_Z^\dagger \) defining the **marginal estimand** \( \Delta_{\mathrm{marg}}^\dagger=\delta+\eta\,\pi_Z^\dagger \) (default `0.5`).  
-- `error_type` — Error family for \( Y \): `"normal"`, `"t"`, or `"skew"` (variance-normalized).  
-- `rho_XY` — Assumed correlation between \( X \) and \( Y \) used **only in H0 calibration** to recover the dependence between \( T_1 \) and the final statistic.
+- `muX_C`, `sigmaX` — Mean/SD of surrogate $X$ in the Stage-1 control arm.  
+- `gamma0`, `gamma1` — External linear calibration for the surrogate projection $\hat{Y} = \gamma_0 + \gamma_1 X$ (pre-specified; **not** re-fit at interim).  
+- `mu0`, `sigmaY` — Baseline mean/SD of the primary endpoint $Y$ in $Z=0$.  
+- `theta` — Main effect of the shifted subpopulation on $Y$ (baseline shift for $Z=1$, applies to both arms).  
+- `eta` — Treatment-by-shift interaction (difference in treatment effect in $Z=1$ vs $Z=0$).  
+- `piZ` — Actual prevalence of $Z=1$ among Stage-2 enrollees (drives the partial population shift).  
+- `pi_fixed` — Design-fixed prevalence $\pi_Z^{\dagger}$ defining the **marginal estimand** $\Delta_{\mathrm{marg}}^{\dagger} = \delta + \eta \, \pi_Z^{\dagger}$ (default `0.5`).  
+- `error_type` — Error family for $Y$: `"normal"`, `"t"`, or `"skew"` (variance-normalized).  
+- `rho_XY` — Assumed correlation between $X$ and $Y$ used **only in H0 calibration** to recover the dependence between $T_1$ and the final statistic.
 
 **Parameters (calibration controls)**  
 - `alpha_one_sided` — Target **overall one-sided Type I error** (e.g., `0.05`).  
-- `B_ref` — H0 Monte Carlo size (larger → smoother \( e(t_1) \) and \( c(t_1) \)).  
+- `B_ref` — H0 Monte Carlo size (larger → smoother $e(t_1)$ and $c(t_1)$).  
 - `batch_size` — Batch size for generating H0 pairs (memory/parallel friendly).  
-- `z1_grid` — Grid of \( t_1 \) values on which \( e(t_1) \) and \( c(t_1) \) are estimated.  
+- `z1_grid` — Grid of $t_1$ values on which $e(t_1)$ and $c(t_1)$ are estimated.  
 - `min_in_bin` — Minimum conditional sample per grid point.  
-- `h0` — Initial neighborhood half-width around \( t_1 \) (auto-expands if needed).
+- `h0` — Initial neighborhood half-width around $t_1$ (auto-expands if needed).
 
 **Returns**  
 A `ce_lookup` object with:
 - `b_ref` — The calibrated reference boundary.  
 - `e_fun(t1)` — Conditional error function.  
 - `c_fun(t1)` — Conditional critical value.  
-- `z1_grid` — The \( t_1 \) grid.  
+- `z1_grid` — The $t_1$ grid.  
 - `meta` — Calibration metadata (`alpha`, `B_ref`, `rho_XY`, `pi_fixed`, `error_type`, etc.).
 
 **Note**  
@@ -204,13 +204,13 @@ Keep `error_type`, `alpha_one_sided`, and `pi_fixed` **consistent** between `bui
 <summary><code>simulate_trial_ce()</code> — Simulate one two-stage trial with MC-CE rule</summary>
 
 **Purpose**  
-Run a single two-stage trial: Stage-1 surrogate-only interim for early efficacy; if continued, Stage-2 final uses \( c(T_1) \) for a one-sided decision and reports the CE-consistent one-sided LCL.
+Run a single two-stage trial: Stage-1 surrogate-only interim for early efficacy; if continued, Stage-2 final uses $c(T_1)$ for a one-sided decision and reports the CE-consistent one-sided LCL.
 
 **Parameters**  
 - Same design/data inputs as `build_ce_lookup()`:  
   `n1`, `n2`, `delta`, `piZ`, `theta`, `eta`, `sigmaY`, `error_type`,  
   `muX_C`, `sigmaX`, `gamma0`, `gamma1`, `mu0`, `pi_fixed`.  
-- `muX_T` — *(optional)* treatment-arm mean of \( X \) at Stage-1; if `NULL`, set to  
+- `muX_T` — *(optional)* treatment-arm mean of $X$ at Stage-1; if `NULL`, set to  
   `muX_C + delta/gamma1` to align the interim signal with the primary effect (recommended default).  
 - `lookup` — The CE lookup from `build_ce_lookup()`.
 
@@ -244,17 +244,17 @@ A list with:
 ---
 
 <details>
-<summary><code>plot_ce_mapping()</code> — Diagnostics for CE mapping under <em>H0</em></summary>
+<summary><code>plot_ce_mapping()</code> — Diagnostics for CE mapping under H0</summary>
 
 **Purpose**  
-Plot three diagnostics: the joint \( (T_1, S_{\mathrm{final}}) \) under H0, \( e(t_1) \), and \( c(t_1) \).
+Plot three diagnostics: the joint $(T_1, S_{\mathrm{final}})$ under H0, $e(t_1)$, and $c(t_1)$.
 
 **Parameters**  
 - `H0_dt` — Data frame with columns `z1`, `zf` (typically from H0 results with `early_stop == FALSE`).  
 - `lookup` — The `ce_lookup` object.
 
 **Returns**  
-A named list of `ggplot` objects: `pA` (joint), `pB` (\( e(t_1) \)), `pC` (\( c(t_1) \)).
+A named list of `ggplot` objects: `pA` (joint), `pB` ($e(t_1)$), `pC` ($c(t_1)$).
 </details>
 
 ---
@@ -264,7 +264,7 @@ A named list of `ggplot` objects: `pA` (joint), `pB` (\( e(t_1) \)), `pC` (\( c(
 
 **Purpose**  
 Create a single four-panel figure:  
-(A) H0 joint distribution; (B) \( e(t_1) \); (C) \( c(t_1) \); (D) decision geometry under the alternative.
+(A) H0 joint distribution; (B) $e(t_1)$; (C) $c(t_1)$; (D) decision geometry under the alternative.
 
 **Parameters**  
 - `h0_results` — `simulate_trials_ce(..., under H0)$results`.  
