@@ -24,11 +24,24 @@ Traditional adaptive designs face challenges when the enrolled population shifts
 ---
 ## 🛠️ Installation
 
-You can install the development version of `PopShiftCE` from GitHub with:
+You can install the `PopShiftCE` package from GitHub. There are two options depending on your needs.
+
+#### **1. Standard Installation (Core Functionality)**
+
+This will install the package with only the essential dependencies required for its core calculations and simulations.
 
 ```r
 # install.packages("devtools")
 devtools::install_github("haohaostats/PopShiftCE")
+```
+
+#### **2. Full Installation (for Developers and Examples)**
+
+If you wish to run all examples, generate plots, or build the package vignettes, we recommend installing the package along with all its "suggested" dependencies (like `ggplot2` and `patchwork`). The `dependencies = TRUE` argument handles this for you.
+
+```r
+# This command installs the package AND its suggested dependencies
+devtools::install_github("haohaostats/PopShiftCE", dependencies = TRUE)
 ```
 
 ---
@@ -126,7 +139,7 @@ diagnostic_panel <- plot_diagnostic_panel(
 # Display the panel
 print(diagnostic_panel)
 
-# Save the panel as a vector graphic for best quality
+# Save the panel as a vector graphic
 # ggsave("figures/Fig_Diagnostic_Panel.svg", diagnostic_panel, width = 12, height = 10)
 ```
 

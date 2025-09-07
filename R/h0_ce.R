@@ -66,12 +66,20 @@ one_H0_pair <- function(n1, n2, muX_C, sigmaX, gamma0, gamma1,
 #' Then estimates the conditional error \eqn{e(t_1)} and the conditional critical value
 #' \eqn{c(t_1)} from the conditional null of \eqn{S_{\mathrm{final}}|T_1=t_1}.
 #'
-#' @param alpha_one_sided target one-sided alpha
-#' @param B_ref Monte Carlo size for H0 pairing
-#' @param z1_grid grid of t1 values for lookup
-#' @param min_in_bin minimum conditional sample per grid point
-#' @param h0 initial half-width for local neighborhoods in t1
-#' @return an object of class 'ce_lookup' with elements b_ref, e_fun, c_fun, z1_grid, meta
+#' @param n1,n2 Stage-1/Stage-2 per-arm sample sizes.
+#' @param muX_C,sigmaX,gamma0,gamma1 Stage-1 surrogate and calibration parameters.
+#' @param mu0,sigmaY,theta,eta,piZ Stage-2 primary outcome and shift parameters.
+#' @param pi_fixed Design-fixed mixture prevalence for the estimand.
+#' @param error_type Error distribution for the primary outcome.
+#' @param rho_XY Surrogate-primary correlation for H0 calibration.
+#' @param alpha_one_sided Target one-sided alpha level.
+#' @param B_ref Monte Carlo size for H0 pairing.
+#' @param batch_size Number of simulations per batch (for progress bar).
+#' @param z1_grid Grid of t1 values for the lookup table.
+#' @param min_in_bin Minimum conditional sample per grid point for estimating c(t1).
+#' @param h0 Initial half-width for local neighborhoods in t1.
+#' @return An object of class 'ce_lookup' with elements b_ref, e_fun, c_fun, z1_grid, meta.
+#' @importFrom progress progress_bar
 #' @export
 build_ce_lookup <- function(n1, n2,
                             muX_C, sigmaX, gamma0, gamma1,
@@ -86,7 +94,19 @@ build_ce_lookup <- function(n1, n2,
   error_type <- match.arg(error_type)
   
   n_batches <- ceiling(B_ref / batch_size)
+  
+  # Initialize the progress bar
+  pb <- progress::progress_bar$new(
+    format = "  Calibrating [:bar] :percent in :elapsed | ETA: :eta",
+    total = n_batches + 2, # n_batches for sims, +2 for boundary and c(t1) calc
+    width = 60,
+    clear = FALSE
+  )
+  pb$tick(0) # Show the progress bar immediately
+  
+  # Run H0 simulations in batches
   H0_list <- lapply(seq_len(n_batches), function(bi) {
+    pb$tick() # Update progress bar each batch
     k <- if (bi < n_batches) batch_size else (B_ref - batch_size*(n_batches-1))
     mat <- replicate(k, one_H0_pair(
       n1, n2, muX_C, sigmaX, gamma0, gamma1,
@@ -95,11 +115,13 @@ build_ce_lookup <- function(n1, n2,
     ))
     t(mat)
   })
+  
   H0_mat <- do.call(rbind, H0_list)
   colnames(H0_mat) <- c("z1","zf")
   H0_dt <- as.data.frame(H0_mat)
   H0_dt <- H0_dt[is.finite(H0_dt$z1) & is.finite(H0_dt$zf), , drop = FALSE]
   
+  # Calibrate reference boundary b_ref
   alpha_hat <- function(b){
     if (nrow(H0_dt) == 0) return(0)
     cond <- (H0_dt$z1 >= b) | ((H0_dt$z1 < b) & (H0_dt$zf >= b))
@@ -112,6 +134,9 @@ build_ce_lookup <- function(n1, n2,
   b_ref <- uniroot(function(b) alpha_hat(b) - alpha_one_sided,
                    lower = b_lo, upper = b_hi, tol = 1e-4)$root
   
+  pb$tick() # Mark boundary calibration as done
+  
+  # Estimate conditional error e(t1) and critical value c(t1)
   e_vec <- c_vec <- numeric(length(z1_grid))
   for (ii in seq_along(z1_grid)) {
     z1g <- z1_grid[ii]
@@ -133,6 +158,9 @@ build_ce_lookup <- function(n1, n2,
     c_vec[ii] <- as.numeric(stats::quantile(zf_cond, probs = 1 - e_hat, names = FALSE, type = 7))
   }
   
+  pb$tick() # Mark c(t1) estimation as done
+  
+  # Return the final lookup object
   structure(list(
     b_ref   = b_ref,
     z1_grid = z1_grid,
