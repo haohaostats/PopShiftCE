@@ -2,7 +2,6 @@
 # PopShiftCE: Monte Carlo Conditional Error for Adaptive Trials 🛡️
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![R-CMD-check](https://github.com/haohaostats/PopShiftCE/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/haohaostats/PopShiftCE/actions/workflows/R-CMD-check.yaml)
 
 **An R package to design and simulate two-stage seamless adaptive trials with partial population shifts, using a Monte Carlo-calibrated Conditional Error (CE) framework.**
 
