@@ -15,8 +15,8 @@ targeting the marginal estimand \eqn{\Delta_{marg}^\dagger = \delta + \eta * \pi
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/YOUR_GH_USERNAME/PopShiftCE}
-  \item Report bugs at \url{https://github.com/YOUR_GH_USERNAME/PopShiftCE/issues}
+  \item \url{https://github.com/haohaostats/PopShiftCE}
+  \item Report bugs at \url{https://github.com/haohaostats/PopShiftCE/issues}
 }
 
 }

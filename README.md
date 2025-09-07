@@ -49,6 +49,53 @@ devtools::install_github("haohaostats/PopShiftCE", dependencies = TRUE)
 
 Here is a complete workflow to design a trial, check its operating characteristics under the null and an alternative, and visualize the results.
 
+## Key Parameters 🔑
+
+The core functions `build_ce_lookup()` and `simulate_trials_ce()` share a consistent set of inputs that define the trial design and calibration.
+
+### Sample size
+- `n1` — Stage-1 **per-arm** sample size (total Stage-1 = `2*n1`).
+- `n2` — Additional Stage-2 **per-arm** size (total Stage-2 = `2*n2`; overall total = `2*(n1+n2)`).
+
+### Effect & population
+- `delta` — Main treatment effect in the original population (`Z = 0`).  
+  Used to evaluate Type I error (`delta = 0`) and power (`delta > 0`).
+- `eta` — Treatment-by-shift interaction for `Z = 1` (difference in effect between `Z = 1` vs `Z = 0`).
+- `theta` — Main effect of the shifted subpopulation on the **primary endpoint** (baseline shift for `Z = 1` that applies to both arms).
+- `piZ` — Actual prevalence of `Z = 1` **among Stage-2 enrollees** (drives the partial population shift in data-generating).
+- `pi_fixed` — Design-fixed prevalence \( \pi_Z^\dagger \) that defines the **marginal estimand**  
+  \( \Delta_{\text{marg}}^\dagger = \delta + \eta\,\pi_Z^\dagger \). Defaults to `0.5`.
+
+### Surrogate endpoint (Stage-1)
+- `muX_C`, `sigmaX` — Mean/SD of surrogate `X` in the Stage-1 control arm.
+- `muX_T` — *(only in `simulate_trial_ce()` / `simulate_trials_ce()`)* optional mean of `X` in treatment;  
+  if `NULL`, it is set to `muX_C + delta/gamma1` to align the interim signal with the primary effect (recommended default).
+- `gamma0`, `gamma1` — External linear calibration for the surrogate projection  
+  \( \hat{Y} = \gamma_0 + \gamma_1 X \). These are **pre-specified** from outside the trial (not re-fit within Stage-1).
+
+### Primary endpoint (Stage-2 & matured Stage-1)
+- `mu0`, `sigmaY` — Baseline mean/SD of primary endpoint `Y` in `Z = 0`.
+
+### Calibration & simulation controls
+- `error_type` — Error family for `Y`: `"normal"`, `"t"` (heavy-tailed; variance-normalized), or `"skew"` (right-skew).  
+  **Use the same value** in `build_ce_lookup()` and `simulate_*()` to keep calibration consistent.
+- `rho_XY` — Assumed correlation between surrogate `X` and primary `Y` used **only in H0 calibration** to recover the dependence between `T1` and the final statistic.
+- `alpha_one_sided` — Target **overall one-sided Type I error** (e.g., `0.05`).
+- `B_ref` — H0 Monte Carlo size for CE calibration (affects smoothness of \( e(t_1) \) and \( c(t_1) \)).
+- `R` — Number of trial replicates in `simulate_trials_ce()`.
+
+### Advanced (optional, for `build_ce_lookup()`)
+- `batch_size` — Chunk size for generating H0 pairs (useful for memory/parallel control).
+- `z1_grid` — Grid of \( t_1 \) values on which \( e(t_1) \) and \( c(t_1) \) are estimated.
+- `min_in_bin` — Minimum conditional sample per grid point when estimating \( e(t_1) \).
+- `h0` — Initial neighborhood half-width around \( t_1 \) for conditional estimation (auto-expands if needed).
+
+---
+
+### Tips
+- **Calibration consistency:** keep `error_type`, `alpha_one_sided`, and `pi_fixed` the same between `build_ce_lookup()` and `simulate_*()`.
+- **External calibration:** `gamma0` and `gamma1` come from external data/knowledge and should be **pre-specified** in the SAP; do not re-estimate them using Stage-1 trial data.
+
 ### **Step 1: Build the CE Lookup Table 🧮**
 
 This is the core calibration step based on `H0` simulation. It may take a few moments to run.

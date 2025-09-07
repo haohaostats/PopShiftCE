@@ -28,18 +28,32 @@ build_ce_lookup(
 )
 }
 \arguments{
-\item{alpha_one_sided}{target one-sided alpha}
+\item{n1, n2}{Stage-1/Stage-2 per-arm sample sizes.}
 
-\item{B_ref}{Monte Carlo size for H0 pairing}
+\item{muX_C, sigmaX, gamma0, gamma1}{Stage-1 surrogate and calibration parameters.}
 
-\item{z1_grid}{grid of t1 values for lookup}
+\item{mu0, sigmaY, theta, eta, piZ}{Stage-2 primary outcome and shift parameters.}
 
-\item{min_in_bin}{minimum conditional sample per grid point}
+\item{pi_fixed}{Design-fixed mixture prevalence for the estimand.}
 
-\item{h0}{initial half-width for local neighborhoods in t1}
+\item{error_type}{Error distribution for the primary outcome.}
+
+\item{rho_XY}{Surrogate-primary correlation for H0 calibration.}
+
+\item{alpha_one_sided}{Target one-sided alpha level.}
+
+\item{B_ref}{Monte Carlo size for H0 pairing.}
+
+\item{batch_size}{Number of simulations per batch (for progress bar).}
+
+\item{z1_grid}{Grid of t1 values for the lookup table.}
+
+\item{min_in_bin}{Minimum conditional sample per grid point for estimating c(t1).}
+
+\item{h0}{Initial half-width for local neighborhoods in t1.}
 }
 \value{
-an object of class 'ce_lookup' with elements b_ref, e_fun, c_fun, z1_grid, meta
+An object of class 'ce_lookup' with elements b_ref, e_fun, c_fun, z1_grid, meta.
 }
 \description{
 Calibrates a single reference boundary b_ref such that the reference rule
