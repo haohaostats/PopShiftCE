@@ -156,7 +156,6 @@ The panel visualizes:
 ## Functions at a Glance
 
 > Click to expand each function for purpose, parameters, and returns.  
-> Inline math is written with `$...$` (e.g., `$e(t_1)$`, `$c(t_1)$`, `$b_{\mathrm{ref}}$`, `$\\Delta_{\mathrm{marg}}^{\\dagger} = \\delta + \\eta \\, \\pi_Z^{\\dagger}$`, `$\\hat{Y} = \\gamma_0 + \\gamma_1 X$`).
 
 ---
 
@@ -180,7 +179,7 @@ Monte Carlo–calibrate the reference boundary $b_{\mathrm{ref}}$ and estimate t
 
 **Parameters (calibration controls)**  
 - `alpha_one_sided` — Target **overall one-sided Type I error** (e.g., `0.05`).  
-- `B_ref` — H0 Monte Carlo size (larger → smoother $e(t_1)$ and $c(t_1)$).  
+- `B_ref` — H0 Monte Carlo size, larger → smoother $e(t_1)$ and $c(t_1)$.  
 - `batch_size` — Batch size for generating H0 pairs (memory/parallel friendly).  
 - `z1_grid` — Grid of $t_1$ values on which $e(t_1)$ and $c(t_1)$ are estimated.  
 - `min_in_bin` — Minimum conditional sample per grid point.  
@@ -254,7 +253,7 @@ Plot three diagnostics: the joint $(T_1, S_{\mathrm{final}})$ under H0, $e(t_1)$
 - `lookup` — The `ce_lookup` object.
 
 **Returns**  
-A named list of `ggplot` objects: `pA` (joint), `pB` ($e(t_1)$), `pC` ($c(t_1)$).
+A named list of `ggplot` objects: `pA` (joint), `pB` $e(t_1)$, `pC` $c(t_1)$.
 </details>
 
 ---
