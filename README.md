@@ -49,53 +49,6 @@ devtools::install_github("haohaostats/PopShiftCE", dependencies = TRUE)
 
 Here is a complete workflow to design a trial, check its operating characteristics under the null and an alternative, and visualize the results.
 
-## Key Parameters 🔑
-
-The core functions `build_ce_lookup()` and `simulate_trials_ce()` share a consistent set of inputs that define the trial design and calibration.
-
-### Sample size
-- `n1` — Stage-1 **per-arm** sample size (total Stage-1 = `2*n1`).
-- `n2` — Additional Stage-2 **per-arm** size (total Stage-2 = `2*n2`; overall total = `2*(n1+n2)`).
-
-### Effect & population
-- `delta` — Main treatment effect in the original population (`Z = 0`).  
-  Used to evaluate Type I error (`delta = 0`) and power (`delta > 0`).
-- `eta` — Treatment-by-shift interaction for `Z = 1` (difference in effect between `Z = 1` vs `Z = 0`).
-- `theta` — Main effect of the shifted subpopulation on the **primary endpoint** (baseline shift for `Z = 1` that applies to both arms).
-- `piZ` — Actual prevalence of `Z = 1` **among Stage-2 enrollees** (drives the partial population shift in data-generating).
-- `pi_fixed` — Design-fixed prevalence \( \pi_Z^\dagger \) that defines the **marginal estimand**  
-  \( \Delta_{\text{marg}}^\dagger = \delta + \eta\,\pi_Z^\dagger \). Defaults to `0.5`.
-
-### Surrogate endpoint (Stage-1)
-- `muX_C`, `sigmaX` — Mean/SD of surrogate `X` in the Stage-1 control arm.
-- `muX_T` — *(only in `simulate_trial_ce()` / `simulate_trials_ce()`)* optional mean of `X` in treatment;  
-  if `NULL`, it is set to `muX_C + delta/gamma1` to align the interim signal with the primary effect (recommended default).
-- `gamma0`, `gamma1` — External linear calibration for the surrogate projection  
-  \( \hat{Y} = \gamma_0 + \gamma_1 X \). These are **pre-specified** from outside the trial (not re-fit within Stage-1).
-
-### Primary endpoint (Stage-2 & matured Stage-1)
-- `mu0`, `sigmaY` — Baseline mean/SD of primary endpoint `Y` in `Z = 0`.
-
-### Calibration & simulation controls
-- `error_type` — Error family for `Y`: `"normal"`, `"t"` (heavy-tailed; variance-normalized), or `"skew"` (right-skew).  
-  **Use the same value** in `build_ce_lookup()` and `simulate_*()` to keep calibration consistent.
-- `rho_XY` — Assumed correlation between surrogate `X` and primary `Y` used **only in H0 calibration** to recover the dependence between `T1` and the final statistic.
-- `alpha_one_sided` — Target **overall one-sided Type I error** (e.g., `0.05`).
-- `B_ref` — H0 Monte Carlo size for CE calibration (affects smoothness of \( e(t_1) \) and \( c(t_1) \)).
-- `R` — Number of trial replicates in `simulate_trials_ce()`.
-
-### Advanced (optional, for `build_ce_lookup()`)
-- `batch_size` — Chunk size for generating H0 pairs (useful for memory/parallel control).
-- `z1_grid` — Grid of \( t_1 \) values on which \( e(t_1) \) and \( c(t_1) \) are estimated.
-- `min_in_bin` — Minimum conditional sample per grid point when estimating \( e(t_1) \).
-- `h0` — Initial neighborhood half-width around \( t_1 \) for conditional estimation (auto-expands if needed).
-
----
-
-### Tips
-- **Calibration consistency:** keep `error_type`, `alpha_one_sided`, and `pi_fixed` the same between `build_ce_lookup()` and `simulate_*()`.
-- **External calibration:** `gamma0` and `gamma1` come from external data/knowledge and should be **pre-specified** in the SAP; do not re-estimate them using Stage-1 trial data.
-
 ### **Step 1: Build the CE Lookup Table 🧮**
 
 This is the core calibration step based on `H0` simulation. It may take a few moments to run.
@@ -177,6 +130,7 @@ The `plot_diagnostic_panel()` function provides a comprehensive "four-in-one" vi
 
 ```r
 # This single function creates a complete diagnostic panel
+library(patchwork)  ## install.packages("patchwork")
 diagnostic_panel <- plot_diagnostic_panel(
   h0_results = res0$results,
   alt_results = res1$results,
@@ -201,13 +155,128 @@ The panel visualizes:
 ---
 ## Functions at a Glance
 
-| Function | Description |
-| :--- | :--- |
-| `build_ce_lookup()` | Calibrates the reference boundary and conditional error functions. |
-| `simulate_trial_ce()` | Simulates a single trial from start to finish. |
-| `simulate_trials_ce()` | A wrapper to simulate many trials and summarize operating characteristics. |
-| `plot_diagnostic_panel()` | Creates the main "four-in-one" diagnostic plot panel. |
-| `plot_ce_mapping()` | Creates the three diagnostic plots for the CE calibration. |
+> Click to expand each function for **purpose, parameters, and returns**.  
+> Math is written with inline LaTeX (e.g., \( e(t_1) \), \( c(t_1) \), \( b_{\mathrm{ref}} \), \( \Delta_{\mathrm{marg}}^\dagger=\delta+\eta\,\pi_Z^\dagger \), \( \hat{Y}=\gamma_0+\gamma_1 X \)).
+
+---
+
+<details>
+<summary><code>build_ce_lookup()</code> — Calibrate CE mapping under <em>H0</em></summary>
+
+**Purpose**  
+Monte Carlo–calibrate the reference boundary \( b_{\mathrm{ref}} \) and estimate the conditional error \( e(t_1) \) and the conditional critical value \( c(t_1) \).
+
+**Parameters (design & data-generating)**  
+- `n1`, `n2` — Stage-1 and Stage-2 **per-arm** sample sizes (totals are `2*n1` and `2*n2`).  
+- `muX_C`, `sigmaX` — Mean/SD of surrogate \( X \) in the Stage-1 control arm.  
+- `gamma0`, `gamma1` — External linear calibration for the surrogate projection \( \hat{Y}=\gamma_0+\gamma_1 X \) (pre-specified; **not** re-fit at interim).  
+- `mu0`, `sigmaY` — Baseline mean/SD of the primary endpoint \( Y \) in \( Z=0 \).  
+- `theta` — Main effect of the shifted subpopulation on \( Y \) (baseline shift for \( Z=1 \), applies to both arms).  
+- `eta` — Treatment-by-shift interaction (difference in treatment effect in \( Z=1 \) vs \( Z=0 \)).  
+- `piZ` — Actual prevalence of \( Z=1 \) among Stage-2 enrollees (drives the partial population shift).  
+- `pi_fixed` — Design-fixed prevalence \( \pi_Z^\dagger \) defining the **marginal estimand** \( \Delta_{\mathrm{marg}}^\dagger=\delta+\eta\,\pi_Z^\dagger \) (default `0.5`).  
+- `error_type` — Error family for \( Y \): `"normal"`, `"t"`, or `"skew"` (variance-normalized).  
+- `rho_XY` — Assumed correlation between \( X \) and \( Y \) used **only in H0 calibration** to recover the dependence between \( T_1 \) and the final statistic.
+
+**Parameters (calibration controls)**  
+- `alpha_one_sided` — Target **overall one-sided Type I error** (e.g., `0.05`).  
+- `B_ref` — H0 Monte Carlo size (larger → smoother \( e(t_1) \) and \( c(t_1) \)).  
+- `batch_size` — Batch size for generating H0 pairs (memory/parallel friendly).  
+- `z1_grid` — Grid of \( t_1 \) values on which \( e(t_1) \) and \( c(t_1) \) are estimated.  
+- `min_in_bin` — Minimum conditional sample per grid point.  
+- `h0` — Initial neighborhood half-width around \( t_1 \) (auto-expands if needed).
+
+**Returns**  
+A `ce_lookup` object with:
+- `b_ref` — The calibrated reference boundary.  
+- `e_fun(t1)` — Conditional error function.  
+- `c_fun(t1)` — Conditional critical value.  
+- `z1_grid` — The \( t_1 \) grid.  
+- `meta` — Calibration metadata (`alpha`, `B_ref`, `rho_XY`, `pi_fixed`, `error_type`, etc.).
+
+**Note**  
+Keep `error_type`, `alpha_one_sided`, and `pi_fixed` **consistent** between `build_ce_lookup()` and `simulate_*()`.
+</details>
+
+---
+
+<details>
+<summary><code>simulate_trial_ce()</code> — Simulate one two-stage trial with MC-CE rule</summary>
+
+**Purpose**  
+Run a single two-stage trial: Stage-1 surrogate-only interim for early efficacy; if continued, Stage-2 final uses \( c(T_1) \) for a one-sided decision and reports the CE-consistent one-sided LCL.
+
+**Parameters**  
+- Same design/data inputs as `build_ce_lookup()`:  
+  `n1`, `n2`, `delta`, `piZ`, `theta`, `eta`, `sigmaY`, `error_type`,  
+  `muX_C`, `sigmaX`, `gamma0`, `gamma1`, `mu0`, `pi_fixed`.  
+- `muX_T` — *(optional)* treatment-arm mean of \( X \) at Stage-1; if `NULL`, set to  
+  `muX_C + delta/gamma1` to align the interim signal with the primary effect (recommended default).  
+- `lookup` — The CE lookup from `build_ce_lookup()`.
+
+**Returns**  
+A list with:  
+`reject`, `early_stop`, `final_est`, `final_se`, `lcl_final`, `lcl_interim`,  
+`coverage_final`, `coverage_overall`, `sample_used_total`, `sample_used_per_arm`,  
+`z1`, `zf`, `cz1`.
+</details>
+
+---
+
+<details>
+<summary><code>simulate_trials_ce()</code> — Replicate many trials & summarize operating characteristics</summary>
+
+**Purpose**  
+Repeat `R` trials and summarize Type I error/power, coverage, and average sample numbers (ASN).
+
+**Parameters**  
+- Same design/data inputs as `simulate_trial_ce()` plus:  
+- `R` — Number of replicates.  
+- `digits_rate`, `digits_effect`, `digits_asn` — Decimal places for rates, effects, and sample sizes in the pretty summary.
+
+**Returns**  
+A list with:  
+- `results` — Per-replicate data frame.  
+- `summary` — Numeric one-row data frame (for downstream use).  
+- `summary_pretty` — Character one-row data frame with fixed decimals (for display).
+</details>
+
+---
+
+<details>
+<summary><code>plot_ce_mapping()</code> — Diagnostics for CE mapping under <em>H0</em></summary>
+
+**Purpose**  
+Plot three diagnostics: the joint \( (T_1, S_{\mathrm{final}}) \) under H0, \( e(t_1) \), and \( c(t_1) \).
+
+**Parameters**  
+- `H0_dt` — Data frame with columns `z1`, `zf` (typically from H0 results with `early_stop == FALSE`).  
+- `lookup` — The `ce_lookup` object.
+
+**Returns**  
+A named list of `ggplot` objects: `pA` (joint), `pB` (\( e(t_1) \)), `pC` (\( c(t_1) \)).
+</details>
+
+---
+
+<details>
+<summary><code>plot_diagnostic_panel()</code> — Four-in-one panel (H0 + H1)</summary>
+
+**Purpose**  
+Create a single four-panel figure:  
+(A) H0 joint distribution; (B) \( e(t_1) \); (C) \( c(t_1) \); (D) decision geometry under the alternative.
+
+**Parameters**  
+- `h0_results` — `simulate_trials_ce(..., under H0)$results`.  
+- `alt_results` — `simulate_trials_ce(..., under H1)$results`.  
+- `lookup` — The `ce_lookup` object.
+
+**Returns**  
+A combined plot (requires `ggplot2`; if `patchwork` or `cowplot` is present, uses it for layout).
+
+**Note**  
+If your current version does not export this function, update to the latest commit or compose panel D yourself with `lookup$c_fun`.
+</details>
 
 ---
 ## License
