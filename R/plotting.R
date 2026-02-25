@@ -29,7 +29,7 @@ plot_ce_mapping <- function(H0_dt, lookup, combine = FALSE, bins = 120) {
   stopifnot(is.list(lookup), !is.null(lookup$b_ref), !is.null(lookup$z1_grid),
             is.function(lookup$e_fun), is.function(lookup$c_fun))
 
-  gg <- ggplot2
+  gg <- asNamespace("ggplot2")
 
   pA <- gg$ggplot(H0_dt, gg$aes(x = z1, y = zf)) +
     gg$stat_bin2d(bins = bins) +
@@ -92,7 +92,7 @@ plot_decision_geometry <- function(results, lookup) {
   stopifnot(all(c("z1", "zf", "early_stop", "reject") %in% names(results)))
 
   df_non <- subset(results, early_stop == FALSE & is.finite(z1) & is.finite(zf))
-  gg <- ggplot2
+  gg <- asNamespace("ggplot2")
 
   gg$ggplot(df_non, gg$aes(x = z1, y = zf, color = reject)) +
     gg$geom_point(alpha = 0.35, na.rm = TRUE) +

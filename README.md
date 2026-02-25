@@ -27,17 +27,9 @@ PopShiftCE is a **method implementation package**. It is designed to help users:
 
 ---
 
-## ✨ What this README example is (and is not)
+## ✨ Goal of this example
 
 This README provides a **method implementation example** that walks through the main workflow of the PopShiftCE method.
-
-It is **not**:
-
-- a "minimum code that merely runs",
-- a paper-table reproduction script, or
-- a full simulation pipeline for every sensitivity analysis in the manuscript.
-
-### ✅ Goal of this example
 Show the **core method workflow** in a way that GitHub users can understand and adapt:
 
 1. start from baseline defaults,
@@ -48,7 +40,7 @@ Show the **core method workflow** in a way that GitHub users can understand and 
 6. generate diagnostic plots.
 
 > [!NOTE]
-> **Computation note:** The package is **serial by default** (no parallel backend required). This is intentional for robustness across user environments. For interactive use, reduce `B_ref`, `B_val`, and `R`; for manuscript-scale studies, increase them according to your precision target.
+> **Computation note:** The package is **serial by default** (no parallel backend required). This is intentional for robustness across user environments. For interactive use, reduce `B_ref`, `B_val`, and `R`; for high-precision operating characteristics, increase them according to your precision target.
 
 ---
 
@@ -143,8 +135,10 @@ H0_pairs <- simulate_h0_pairs(
 ce_plots <- plot_ce_mapping(H0_pairs, lookup)
 
 # Or request a combined 2x2 panel (requires patchwork)
-# ce_panel <- plot_ce_mapping(H0_pairs, lookup, combine = TRUE)
-# ce_panel
+# install.packages("patchwork")   
+library(patchwork)
+ce_panel <- plot_ce_mapping(H0_pairs, lookup, combine = TRUE)
+ce_panel
 
 # 4) Simulate a null scenario (delta = 0)
 #    Here, rejection_rate is interpreted as the achieved one-sided Type I error rate.
@@ -203,13 +197,16 @@ p_decision <- plot_decision_geometry(res_alt$results, lookup)
 p_decision
 
 # Optional: combined diagnostics panel (requires patchwork)
-# panel <- plot_diagnostic_panel(res_null$results, res_alt$results, lookup)
-# panel
+# install.packages("patchwork")   
+library(patchwork)
+panel <- plot_diagnostic_panel(res_null$results, res_alt$results, lookup)
+panel
+
 ```
 
 ---
 
-## 📊 Interpreting simulation summaries (paper terminology)
+## 📊 Interpreting simulation summaries
 
 `simulate_trials_ce()` returns:
 
@@ -260,7 +257,7 @@ cfg$pi_fixed    # 0.5
 
 - The package is **serial by default** (no parallel backend).
 - For interactive exploration, use smaller Monte Carlo sizes (e.g., `B_ref = 5000-20000`, `R = 500-2000`).
-- For manuscript-quality operating characteristics, use larger values consistent with your protocol and precision target.
+- For higher-precision results, use larger values consistent with your protocol and precision target.
 
 ---
 
