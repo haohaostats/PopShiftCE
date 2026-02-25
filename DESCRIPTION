@@ -1,0 +1,30 @@
+Package: PopShiftCE
+Type: Package
+Title: Monte Carlo Conditional Error for Two-Stage Trials under Partial Population Shift
+Version: 0.2.0
+Authors@R: c(
+    person(given = "Hao", family = "Chen", email = "hche2036@uni.sydney.edu.au", role = c("aut", "cre"))
+)
+Description: Implements a Monte Carlo calibrated conditional error (CE) method
+    for two-stage seamless adaptive trials with a surrogate-only interim and a
+    primary-endpoint final analysis under partial population shift. The package
+    supports design-fixed and as-observed Stage-2 mixture targets, kernel-smoothed
+    CE lookup calibration with optional monotonicity constraints, simulation of
+    operating characteristics, and diagnostic plotting.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports:
+    stats,
+    graphics,
+    grDevices,
+    utils,
+    MASS,
+    sandwich
+Suggests:
+    ggplot2,
+    patchwork,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
