@@ -98,8 +98,10 @@ simulate_h0_pairs <- function(B, ..., seed = NULL) {
   B <- as.integer(B)
   if (!is.finite(B) || B <= 0) stop("B must be a positive integer.")
   if (!is.null(seed)) set.seed(seed, kind = "L'Ecuyer-CMRG")
-
-  mat <- replicate(B, one_H0_pair(...))
+  
+  args <- list(...)
+  mat <- replicate(B, do.call(one_H0_pair, args))
+  
   out <- as.data.frame(t(mat))
   colnames(out) <- c("z1", "zf")
   out <- out[is.finite(out$z1) & is.finite(out$zf), , drop = FALSE]
