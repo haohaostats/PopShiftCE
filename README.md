@@ -131,15 +131,6 @@ H0_pairs <- simulate_h0_pairs(
   seed = 20250908
 )
 
-# Returns a named list of ggplot objects by default (pA, pB, pC, pD)
-ce_plots <- plot_ce_mapping(H0_pairs, lookup)
-
-# Or request a combined 2x2 panel (requires patchwork)
-# install.packages("patchwork")   
-library(patchwork)
-ce_panel <- plot_ce_mapping(H0_pairs, lookup, combine = TRUE)
-ce_panel
-
 # 4) Simulate a null scenario (delta = 0)
 #    Here, rejection_rate is interpreted as the achieved one-sided Type I error rate.
 res_null <- simulate_trials_ce(
