@@ -95,8 +95,8 @@ lookup <- build_ce_lookup(
   batch_size = 2000,
   do_validation = FALSE,
   B_val = 50000,      # demo size
-  seed_lookup = 20250901,
-  seed_val = 20250911,
+  seed_lookup = 20260101,
+  seed_val = 20260101,
   verbose = TRUE
 )
 
@@ -128,7 +128,7 @@ H0_pairs <- simulate_h0_pairs(
   pi_fixed = cfg$pi_fixed,
   error_type = cfg$error_type,
   rho_XY = cfg$rho_XY,
-  seed = 20250908
+  seed = 20260101
 )
 
 # 4) Simulate a null scenario (delta = 0)
