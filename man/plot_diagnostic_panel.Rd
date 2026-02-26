@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting.R
 \name{plot_diagnostic_panel}
 \alias{plot_diagnostic_panel}
-\title{Four-panel diagnostic panel (CE mapping + decision geometry)}
+\title{Four-panel diagnostic panel for the main workflow}
 \usage{
 plot_diagnostic_panel(h0_results, alt_results, lookup)
 }
@@ -17,6 +17,18 @@ plot_diagnostic_panel(h0_results, alt_results, lookup)
 A patchwork composite object.
 }
 \description{
-Combines CE mapping plots from a null run with the decision geometry under an
-alternative run.
+Combines CE calibration diagnostics from a null simulation with the decision
+geometry under an alternative simulation, following the paper-style layout:
+}
+\details{
+\itemize{
+\item Panel A: joint null cloud \verb{(T1, S_final)}
+\item Panel B: conditional error function \code{e(t1)}
+\item Panel C: marginal density of \code{T1} under \code{H0}
+\item Panel D: decision geometry under an alternative scenario
+}
+
+(The conditional critical value curve \code{c(t1)} is available via
+\code{\link[=plot_ce_mapping]{plot_ce_mapping()}} and is often best treated as a supplementary diagnostic in
+the baseline setting.)
 }

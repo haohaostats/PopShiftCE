@@ -30,9 +30,12 @@ By default the function returns a named list of plots:
 \itemize{
 \item \code{pA}: joint null cloud \verb{(T1, S_final)};
 \item \code{pB}: conditional error function \code{e(t1)};
-\item \code{pC}: conditional critical value function \code{c(t1)};
+\item \code{pC}: conditional critical value function \code{c(t1)} (often near-flat in the
+baseline setting and therefore typically more useful as a supplementary
+diagnostic);
 \item \code{pD}: marginal density of \code{T1} under \code{H0}.
 }
 
-If \code{combine = TRUE}, a patchwork composite (2x2 panel) is returned instead.
+If \code{combine = TRUE}, a patchwork composite (2x2 panel) of the CE calibration
+diagnostics is returned (A/B/C/D in the order above).
 }

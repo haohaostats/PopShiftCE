@@ -193,6 +193,8 @@ res_alt$summary
 res_alt$summary_pretty
 
 # 6) Decision geometry plot under the alternative (requires ggplot2)
+# install.packages("ggplot2")   
+library(ggplot2)
 p_decision <- plot_decision_geometry(res_alt$results, lookup)
 p_decision
 
