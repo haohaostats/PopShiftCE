@@ -272,7 +272,7 @@ res_null <- simulate_trials_ce(
 #    -> rejection_rate = power
 # =========================================
 res_alt <- simulate_trials_ce(
-  R = 2000,
+  R = 10000,
 
   # trial design
   n1 = 150,
