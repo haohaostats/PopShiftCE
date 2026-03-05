@@ -362,7 +362,7 @@ H0_pairs <- simulate_h0_pairs(
   pi_fixed = 0.5,
   error_type = "normal",
   rho_XY = 0.3,
-  seed = 20260103
+  seed = 20260101
 )
 
 ce_plots <- plot_ce_mapping(H0_pairs, lookup, combine = FALSE)
