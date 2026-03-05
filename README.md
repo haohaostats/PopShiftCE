@@ -211,14 +211,14 @@ lookup <- build_ce_lookup(
   alpha_one_sided = 0.05,
 
   # ---- Monte Carlo sizes (demo values) ----
-  B_ref = 20000,
+  B_ref = 150000,
   batch_size = 2000,
-  do_validation = TRUE,
-  B_val = 5000,
+  do_validation = FALSE,
+  B_val = 50000,
 
   # ---- reproducibility ----
   seed_lookup = 20260101,
-  seed_val = 20260102,
+  seed_val = 20260101,
   verbose = TRUE
 )
 
@@ -234,7 +234,7 @@ print(lookup)
 #    -> rejection_rate = achieved one-sided Type I error rate
 # =========================================
 res_null <- simulate_trials_ce(
-  R = 2000,
+  R = 10000,
 
   # trial design
   n1 = 150,
