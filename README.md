@@ -14,7 +14,7 @@
 
 ---
 
-## ✨ What this package is (and is not)
+## ✨ What this package is
 
 **PopShiftCE** implements the core **PopShiftCE method** proposed in the paper:
 
