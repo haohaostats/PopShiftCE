@@ -307,10 +307,8 @@ res_alt <- simulate_trials_ce(
 
 # Inspect summaries
 res_null$summary
-res_null$summary_pretty
 
 res_alt$summary
-res_alt$summary_pretty
 ```
 
 ---
@@ -321,7 +319,6 @@ res_alt$summary_pretty
 
 - **`results`**: replicate-level results (for custom diagnostics and plots)
 - **`summary`**: numeric one-row summary
-- **`summary_pretty`**: formatted summary (character columns for display)
 
 ### Key fields in `summary`
 
@@ -386,7 +383,7 @@ p_decision <- plot_decision_geometry(res_alt$results, lookup)
 p_decision
 ```
 
-### C) Combined diagnostic panel (paper-style workflow panel)
+### C) Combined diagnostic panel
 
 ```r
 # install.packages("patchwork")
