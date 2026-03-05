@@ -418,7 +418,6 @@ pi_fixed = 0.5
 
 ```r
 pi_target = "asObservedS2"
-# pi_fixed is ignored in this mode
 ```
 
 📌 Practical advice:
