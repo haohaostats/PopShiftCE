@@ -307,7 +307,6 @@ res_alt <- simulate_trials_ce(
 
 # Inspect summaries
 res_null$summary
-
 res_alt$summary
 ```
 
