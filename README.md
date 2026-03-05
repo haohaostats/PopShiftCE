@@ -56,7 +56,7 @@ This package helps users:
 devtools::install_local("/path/to/PopShiftCE")
 ```
 
-### Install from GitHub (if hosted)
+### Install from GitHub
 
 ```r
 # install.packages("remotes")
