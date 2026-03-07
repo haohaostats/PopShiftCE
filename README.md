@@ -1,4 +1,4 @@
-﻿# PopShiftCE
+# PopShiftCE
 
 <p align="center">
   <b>Monte Carlo Conditional Error for Two-Stage Seamless Adaptive Trials under Partial Population Shift</b>
@@ -21,7 +21,7 @@
 
 > *Two-Stage Seamless Adaptive Trials under Partial Population Shift: Surrogate-Only Interim and Monte Carlo Conditional-Error Control*
 
-### 鉁?What PopShiftCE is for
+### ✅ What PopShiftCE is for
 
 This package helps users:
 
@@ -42,7 +42,7 @@ Use the web app for interactive exploration and quick diagnostics; use the R pac
 
 ---
 
-## 馃Л Quick navigation
+## 🧭 Quick navigation
 
 - [Web app (user-friendly)](#-web-app-user-friendly)
 - [Installation](#-installation)
@@ -58,7 +58,7 @@ Use the web app for interactive exploration and quick diagnostics; use the R pac
 
 ---
 
-## 馃摝 Installation
+## 📦 Installation
 
 ### Install from a local source directory
 
@@ -76,7 +76,7 @@ remotes::install_github("haohaostats/PopShiftCE")
 
 ---
 
-## 馃摌 Before you run: parameter guide (important)
+## 📘 Before you run: parameter guide (important)
 
 If this is your **first time** using the package, read this section first.
 
@@ -93,7 +93,7 @@ A common source of confusion is that functions like `build_ce_lookup()` and `sim
 - **`n1`**: Stage 1 per-arm sample size (before interim)
 - **`n2`**: Stage 2 additional per-arm sample size (after interim)
 
-馃搶 If a trial does **not** stop early, the total sample size across two arms is:
+📌 If a trial does **not** stop early, the total sample size across two arms is:
 
 - `2 * (n1 + n2)`
 
@@ -138,7 +138,7 @@ These parameters are related but **not the same**:
   - `"asObservedS2"` = observed Stage-2 mixture target
 - **`pi_fixed`**: the fixed target prevalence (used only when `pi_target = "fixed"`)
 
-鉁?Intuition:
+✅ Intuition:
 
 - `piZ` = the prevalence in the **simulated trial scenario**
 - `pi_fixed` = the prevalence used in the **target estimand** when a fixed target is chosen
@@ -161,7 +161,7 @@ Typical README examples use:
 These affect **speed** and **numerical precision**.
 
 - **`alpha_one_sided`**: one-sided significance level (e.g., `0.05`)
-- **`rho_XY`**: Stage-1 surrogate鈥損rimary dependence used for **H0 CE calibration**
+- **`rho_XY`**: Stage-1 surrogate–primary dependence used for **H0 CE calibration**
 - **`B_ref`**: Monte Carlo size for CE lookup calibration (larger = more stable, slower)
 - **`B_val`**: Monte Carlo size for independent null validation (if `do_validation = TRUE`)
 - **`batch_size`**: batch size used during calibration simulation
@@ -169,19 +169,19 @@ These affect **speed** and **numerical precision**.
 
 ---
 
-## 馃敜 Paper notation 鈫?R arguments (quick mapping)
+## 🔤 Paper notation ↔ R arguments (quick mapping)
 
-- \(n_1\), \(n_2\) 鈫?`n1`, `n2`
-- Stage-2 prevalence \(\pi_Z\) (scenario value) 鈫?`piZ`
-- Design-fixed target prevalence \(\pi_Z^\dagger\) 鈫?`pi_fixed` (when `pi_target = "fixed"`)
-- One-sided level \(\alpha\) 鈫?`alpha_one_sided`
-- Stage-1 surrogate鈥損rimary dependence \(\rho_{XY}\) for CE calibration 鈫?`rho_XY`
-- Treatment main effect in \(Z=0\) stratum \(\delta\) 鈫?`delta`
-- Treatment-by-shift interaction \(\eta\) 鈫?`eta`
+- \(n_1\), \(n_2\) → `n1`, `n2`
+- Stage-2 prevalence \(\pi_Z\) (scenario value) → `piZ`
+- Design-fixed target prevalence \(\pi_Z^\dagger\) → `pi_fixed` (when `pi_target = "fixed"`)
+- One-sided level \(\alpha\) → `alpha_one_sided`
+- Stage-1 surrogate–primary dependence \(\rho_{XY}\) for CE calibration → `rho_XY`
+- Treatment main effect in \(Z=0\) stratum \(\delta\) → `delta`
+- Treatment-by-shift interaction \(\eta\) → `eta`
 
 ---
 
-## 馃殌 Quick start (explicit values, first-time users)
+## 🚀 Quick start (explicit values, first-time users)
 
 This example uses **explicit numeric values** (instead of `cfg$n1`, `cfg$n2`, etc.) so that first-time users can immediately see what each parameter is.
 
@@ -323,7 +323,7 @@ res_alt$summary
 
 ---
 
-## 馃搳 Interpreting outputs
+## 📊 Interpreting outputs
 
 `simulate_trials_ce()` returns a list with:
 
@@ -333,8 +333,8 @@ res_alt$summary
 ### Key fields in `summary`
 
 - **`rejection_rate`**: overall rejection probability (including early stops)
-  - under a **null** scenario 鈫?interpret as the **achieved one-sided Type I error rate**
-  - under an **alternative** scenario 鈫?interpret as **power**
+  - under a **null** scenario → interpret as the **achieved one-sided Type I error rate**
+  - under an **alternative** scenario → interpret as **power**
 - **`early_stop_rate`**: interim early-efficacy stopping probability
 - **`coverage_final_conditional`**: final-stage coverage among trials that continue to Stage 2
 - **`coverage_overall`**: overall one-sided coverage combining interim and final branches
@@ -342,11 +342,11 @@ res_alt$summary
 - **`bias_final_conditional`**, **`mse_final_conditional`**: final-stage performance among non-early-stop trials
 
 > [!TIP]
-> In mixed null/alternative grids, use **鈥渞ejection probability鈥?* (or `rejection_rate`) as the primary label, and interpret it by scenario.
+> In mixed null/alternative grids, use **“rejection probability”** (or `rejection_rate`) as the primary label, and interpret it by scenario.
 
 ---
 
-## 馃柤锔?Plotting diagnostics
+## 🖼️ Plotting diagnostics
 
 The package provides plotting helpers for CE diagnostics and decision geometry.
 
@@ -405,7 +405,7 @@ panel
 
 ---
 
-## 馃幆 Design-fixed vs as-observed target
+## 🎯 Design-fixed vs as-observed target
 
 The following functions support both target definitions:
 
@@ -427,14 +427,14 @@ pi_fixed = 0.5
 pi_target = "asObservedS2"
 ```
 
-馃搶 Practical advice:
+📌 Practical advice:
 
 - Start with **`pi_target = "fixed"`** for your first workflow.
 - Use **`"asObservedS2"`** when you specifically want the realized Stage-2 prevalence target.
 
 ---
 
-## 馃И Shorter workflow using defaults template (advanced)
+## 🧪 Shorter workflow using defaults template (advanced)
 
 Once you understand the parameters, you can use the built-in defaults template to reduce typing.
 
@@ -472,7 +472,7 @@ print(lookup2)
 
 ---
 
-## 鈿欙笍 Runtime tips
+## ⚙️ Runtime tips
 
 - The package is **serial by default** (no parallel backend required).
 - This is intentional for robustness across user environments.
@@ -491,7 +491,7 @@ Increase Monte Carlo sizes according to your precision target and available comp
 
 ---
 
-## 馃攣 Reproducibility notes
+## 🔁 Reproducibility notes
 
 For reproducible runs:
 
@@ -503,11 +503,13 @@ The package uses deterministic calibration procedures once the seeds and paramet
 
 ---
 
-## 鉂揅ommon first-time questions
+## ❓Common first-time questions
 
-### 鈥淲hy are there so many parameters?鈥?Because the package exposes the main components of the method (surrogate interim, primary endpoint model, target estimand, and MC-CE calibration) so users can adapt it to different trial-design scenarios.
+### “Why are there so many parameters?”
+Because the package exposes the main components of the method (surrogate interim, primary endpoint model, target estimand, and MC-CE calibration) so users can adapt it to different trial-design scenarios.
 
-### 鈥淒o I need to understand every parameter before running the package?鈥?No. Start from the **explicit-value quick start** above. Then change only:
+### “Do I need to understand every parameter before running the package?”
+No. Start from the **explicit-value quick start** above. Then change only:
 - `n1`, `n2`
 - `delta`
 - `piZ`
@@ -515,7 +517,7 @@ The package uses deterministic calibration procedures once the seeds and paramet
 
 ---
 
-## 馃摎 Citation
+## 📚 Citation
 
 If you use **PopShiftCE** in methodological work or trial-design simulations, please cite:
 
@@ -525,7 +527,7 @@ If you use **PopShiftCE** in methodological work or trial-design simulations, pl
 
 ---
 
-## 鉂わ笍 Acknowledgement of scope
+## ❤️ Acknowledgement of scope
 
 This package is intentionally focused on making the **PopShiftCE method easy to use and adapt**. It prioritizes a clean implementation workflow over reproducing every result from the manuscript.
 
@@ -551,6 +553,4 @@ The project now provides both interfaces:
 
 - Web app for interactive use
 - R package for full reproducible and programmable analysis
-
-
 
