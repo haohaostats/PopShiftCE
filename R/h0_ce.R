@@ -173,7 +173,8 @@ build_ce_lookup <- function(n1, n2,
                             do_validation = TRUE,
                             B_val = 50000,
                             seed_val = 20250911,
-                            verbose = TRUE) {
+                            verbose = TRUE,
+                            progress_callback = NULL) {
   pi_target <- match.arg(pi_target)
   error_type <- match.arg(error_type)
   ce_smoother <- match.arg(ce_smoother)
@@ -205,6 +206,9 @@ build_ce_lookup <- function(n1, n2,
     H0_list[[bi]] <- t(mat)
     if (isTRUE(verbose)) {
       message(sprintf("CE calibration batch %d/%d complete", bi, n_batches))
+    }
+    if (is.function(progress_callback)) {
+      try(progress_callback("lookup_batch", bi, n_batches), silent = TRUE)
     }
   }
 
@@ -313,6 +317,9 @@ build_ce_lookup <- function(n1, n2,
   # 4) Optional independent validation
   val_out <- NULL
   if (isTRUE(do_validation) && B_val > 0L) {
+    if (is.function(progress_callback)) {
+      try(progress_callback("validation", 0L, 1L), silent = TRUE)
+    }
     if (!is.null(seed_val)) set.seed(seed_val, kind = "L'Ecuyer-CMRG")
     Vmat <- replicate(B_val, one_H0_pair(
       n1 = n1, n2 = n2,
@@ -352,6 +359,9 @@ build_ce_lookup <- function(n1, n2,
                "CE-rule rejection probability = %.4f [%.4f, %.4f]"),
         a_ref, ci_ref[1], ci_ref[2], a_ce, ci_ce[1], ci_ce[2]
       ))
+    }
+    if (is.function(progress_callback)) {
+      try(progress_callback("validation", 1L, 1L), silent = TRUE)
     }
   }
 

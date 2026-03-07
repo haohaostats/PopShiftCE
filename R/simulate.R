@@ -169,7 +169,8 @@ simulate_trials_ce <- function(R,
                                digits_rate = 3,
                                digits_effect = 4,
                                digits_asn = 1,
-                               verbose = FALSE) {
+                               verbose = FALSE,
+                               progress_callback = NULL) {
   error_type <- match.arg(error_type)
   pi_target <- match.arg(pi_target)
   R <- as.integer(R)
@@ -187,6 +188,10 @@ simulate_trials_ce <- function(R,
       lookup = lookup,
       pi_target = pi_target, pi_fixed = pi_fixed
     )
+    if (is.function(progress_callback) &&
+        ((rr %% max(1L, floor(R / 100L))) == 0L || rr == R)) {
+      try(progress_callback(rr, R), silent = TRUE)
+    }
     if (isTRUE(verbose) && (rr %% max(1L, floor(R / 10))) == 0L) {
       message(sprintf("simulate_trials_ce: %d/%d replicates complete", rr, R))
     }
